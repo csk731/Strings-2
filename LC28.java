@@ -1,6 +1,6 @@
+// Approach 1: Rabin Karp
 // TC: O(m+n)
 // SC: O(1)
-
 public class LC28 {
     // private final int MOD = 1000000007;
     public int strStr(String haystack, String needle) {
@@ -27,6 +27,43 @@ public class LC28 {
             floatingHashValue *= 26;
             floatingHashValue += (haystack.charAt(i)-96);
             if(floatingHashValue == hashValue) return idxToRemove+1;
+        }
+        return -1;
+    }
+}
+
+
+// Approach 2: KMP
+// TC: O(m+n)
+// SC: O(m+n)
+class LC28_1 {
+    private int[] buildLPSArray(String s) {
+        int n = s.length();
+        int lps[] = new int[n];
+        lps[0] = 0;
+        for (int i = 1; i < n; i++) {
+            int x = lps[i - 1];
+            while (s.charAt(x) != s.charAt(i)) {
+                if (x == 0) {
+                    x = -1;
+                    break;
+                }
+                x = lps[x - 1];
+            }
+            lps[i] = x + 1;
+        }
+        return lps;
+    }
+
+    public int strStr(String haystack, String needle) {
+        int m = haystack.length();
+        int n = needle.length();
+        if (n > m)
+            return -1;
+        int[] lps = buildLPSArray(needle + "$" + haystack);
+        for (int i = 0; i <= m + n; i++) {
+            if (lps[i] == n)
+                return i - (2 * n);
         }
         return -1;
     }
